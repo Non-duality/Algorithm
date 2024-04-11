@@ -5,76 +5,73 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int result = 0;
+    private static final int CABBAGE_PRESENT = 1;
+    private static final int[] ROW_MOVEMENT = {-1, 1, 0, 0};
+    private static final int[] COL_MOVEMENT = {0, 0, -1, 1};
 
-    private static int N, M;
-    private static int[][] arr;
-    private static int[] dr = {-1, 1, 0, 0};
-    private static int[] dc = { 0, 0,-1, 1};
+    private static int numberOfRows, numberOfColumns;
+    private static int[][] field;
     private static boolean[][] visited;
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = null;
+    public static void main(String[] args) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            int testCases = Integer.parseInt(reader.readLine());
 
-        int T = Integer.parseInt(br.readLine());
+            for (int tc = 0; tc < testCases; tc++) {
+                StringTokenizer st = new StringTokenizer(reader.readLine());
+                numberOfColumns = Integer.parseInt(st.nextToken());
+                numberOfRows = Integer.parseInt(st.nextToken());
+                int numberOfCabbages = Integer.parseInt(st.nextToken());
 
-        for(int tc = 0; tc < T; tc++){
-            st = new StringTokenizer(br.readLine());
+                field = new int[numberOfRows][numberOfColumns];
+                visited = new boolean[numberOfRows][numberOfColumns];
 
-            M = Integer.parseInt(st.nextToken()); // 가로의 길이
-            N = Integer.parseInt(st.nextToken()); // 세로의 길이
-            int K = Integer.parseInt(st.nextToken()); // 배추의 개수
-
-            result = 0;
-            arr = new int[N][M];
-            visited = new boolean[N][M];
-
-            for(int i = 0; i < K; i++){
-                st = new StringTokenizer(br.readLine());
-                int c = Integer.parseInt(st.nextToken());
-                int r = Integer.parseInt(st.nextToken());
-                arr[r][c] = 1;
-            }
-
-            for(int i = 0; i < N; i++){
-                for(int j = 0; j < M; j++){
-
-                    if(arr[i][j] == 1 && !visited[i][j]){
-                            DFS(i,j);
-                            result++;
-                    }
+                for (int i = 0; i < numberOfCabbages; i++) {
+                    st = new StringTokenizer(reader.readLine());
+                    int column = Integer.parseInt(st.nextToken());
+                    int row = Integer.parseInt(st.nextToken());
+                    field[row][column] = CABBAGE_PRESENT;
                 }
+
+                System.out.println(countCabbageGroups());
             }
-
-            System.out.println(result);
-
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
-    private static void DFS(int r, int c){
+    private static int countCabbageGroups() {
+        int result = 0;
+        for (int row = 0; row < numberOfRows; row++) {
+            for (int column = 0; column < numberOfColumns; column++) {
+                if (field[row][column] == CABBAGE_PRESENT && !visited[row][column]) {
+                    exploreField(row, column);
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
 
-        if(visited[r][c]){
+    private static void exploreField(int row, int column) {
+        if (visited[row][column]) {
             return;
         }
 
-        visited[r][c] = true;
+        visited[row][column] = true;
 
-        for(int d = 0; d < 4; d++){
-            int nr = r + dr[d];
-            int nc = c + dc[d];
+        for (int direction = 0; direction < 4; direction++) {
+            int newRow = row + ROW_MOVEMENT[direction];
+            int newColumn = column + COL_MOVEMENT[direction];
 
-            if(nr < 0 || nr >= N || nc < 0 || nc >= M){
-                continue;
+            if (isInField(newRow, newColumn) && field[newRow][newColumn] == CABBAGE_PRESENT) {
+                exploreField(newRow, newColumn);
             }
-
-            if(arr[nr][nc] == 1){
-                DFS(nr, nc);
-            }
-
         }
+    }
 
+    private static boolean isInField(int row, int column) {
+        return row >= 0 && row < numberOfRows && column >= 0 && column < numberOfColumns;
     }
 }
