@@ -1,46 +1,60 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    public static int minClassroomsRequired(int[][] intervals) {
-        if (intervals == null || intervals.length == 0) {
-            return 0;
+    private static class ClassInfo{
+        private int start;
+        private int end;
+
+        public ClassInfo(int start, int end) {
+            this.start = start;
+            this.end = end;
         }
 
-        // Sort the intervals by start time
-        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+    }
 
-        // Use a priority queue to track the minimum end time of overlapping intervals
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = null;
+
+        int N = Integer.parseInt(br.readLine());
+
+        List<ClassInfo> list = new ArrayList<>();
+
+        for(int i = 0; i < N; i++){
+            st = new StringTokenizer(br.readLine());
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            list.add(new ClassInfo(start, end));
+        }
+
+        list.sort(((o1, o2) -> {
+            if(o1.start == o2.start){
+                return Integer.compare(o1.end, o2.end);
+            }
+            else{
+                return Integer.compare(o1.start, o2. start);
+            }
+        }));
+
         PriorityQueue<Integer> endTimePQ = new PriorityQueue<>();
+        endTimePQ.add(list.get(0).end);
 
-        // Add the end time of the first interval
-        endTimePQ.add(intervals[0][1]);
-
-        for (int i = 1; i < intervals.length; i++) {
-            // If the current interval starts after the earliest end time, reuse that room
-            if (intervals[i][0] >= endTimePQ.peek()) {
+        int length = list.size();
+        for(int i = 1; i < length; i++){
+            if(endTimePQ.peek() <= list.get(i).start){
                 endTimePQ.poll();
             }
 
-            // Add the end time of the current interval
-            endTimePQ.add(intervals[i][1]);
+            endTimePQ.add(list.get(i).end);
         }
 
-        // The size of the priority queue is the number of rooms needed
-        return endTimePQ.size();
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int[][] intervals = new int[n][2];
-
-        for (int i = 0; i < n; i++) {
-            intervals[i][0] = sc.nextInt();
-            intervals[i][1] = sc.nextInt();
-        }
-
-        System.out.println(minClassroomsRequired(intervals));
-        sc.close();
+        System.out.println(endTimePQ.size());
     }
 }
