@@ -1,80 +1,68 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
+
+class Node {
+    int x, y, broken, dist;
+    Node(int x, int y, int broken, int dist) {
+        this.x = x;
+        this.y = y;
+        this.broken = broken;
+        this.dist = dist;
+    }
+}
 
 public class Main {
-
-    private static int N, M, K;
-    private static int[][] map;
-    private static int[] dr = {-1, 1, 0, 0};
-    private static int[] dc = { 0, 0,-1, 1};
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        map = new int[N][M];
-
-        for(int i = 0; i < N; i++){
-            String temp = br.readLine();
-            for(int j = 0; j < M; j++){
-                map[i][j] = temp.charAt(j) - '0';
+    public static int shortestPath(int N, int M, int K, int[][] grid) {
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        
+        boolean[][][] visited = new boolean[N][M][K + 1];
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(new Node(0, 0, 0, 1));
+        visited[0][0][0] = true;
+        
+        while (!queue.isEmpty()) {
+            Node node = queue.poll();
+            
+            if (node.x == N - 1 && node.y == M - 1) {
+                return node.dist;
+            }
+            
+            for (int i = 0; i < 4; i++) {
+                int nx = node.x + dx[i];
+                int ny = node.y + dy[i];
+                
+                if (nx >= 0 && ny >= 0 && nx < N && ny < M) {
+                    if (grid[nx][ny] == 0 && !visited[nx][ny][node.broken]) {
+                        queue.add(new Node(nx, ny, node.broken, node.dist + 1));
+                        visited[nx][ny][node.broken] = true;
+                    }
+                    
+                    if (grid[nx][ny] == 1 && node.broken < K && !visited[nx][ny][node.broken + 1]) {
+                        queue.add(new Node(nx, ny, node.broken + 1, node.dist + 1));
+                        visited[nx][ny][node.broken + 1] = true;
+                    }
+                }
             }
         }
-
-        int result = BFS();
-        System.out.println(result);
-
+        
+        return -1;
     }
 
-    private static int BFS() {
-        PriorityQueue<int[]> dq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1[2], o2[2]));
-        boolean[][][] visited = new boolean[N][M][K+1];
-
-        visited[0][0][0] = true;
-        dq.offer(new int[] {0, 0, 1, 0}); // r, c, 이동거리, 벽을 부신 횟수
-
-        while(!dq.isEmpty()){
-            int[] cur = dq.poll();
-            int moveCnt = cur[2];
-            int breakCnt = cur[3];
-
-            if(cur[0] == N-1 && cur[1] == M-1){
-                return moveCnt;
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int N = scanner.nextInt();
+        int M = scanner.nextInt();
+        int K = scanner.nextInt();
+        int[][] grid = new int[N][M];
+        
+        for (int i = 0; i < N; i++) {
+            String line = scanner.next();
+            for (int j = 0; j < M; j++) {
+                grid[i][j] = line.charAt(j) - '0';
             }
-
-            for(int d = 0; d < 4; d++){
-                int nr = cur[0] + dr[d];
-                int nc = cur[1] + dc[d];
-
-                
-                if(nr < 0 || nr >= N || nc < 0 || nc >= M) {
-                    continue;
-                }
-
-                if(map[nr][nc] == 1 && breakCnt < K &&!visited[nr][nc][breakCnt + 1]){
-                        visited[nr][nc][breakCnt + 1] = true;
-                        dq.offer(new int[] {nr, nc, moveCnt + 1, breakCnt + 1});
-                }
-
-                if(map[nr][nc] == 0 && !visited[nr][nc][breakCnt]){
-                    visited[nr][nc][breakCnt] = true;
-                    dq.offer(new int[] {nr, nc, moveCnt + 1, breakCnt});
-                }
-
-            }
-
         }
-
-
-        return -1;
+        
+        int result = shortestPath(N, M, K, grid);
+        System.out.println(result);
     }
 }
