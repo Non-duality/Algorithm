@@ -53,13 +53,13 @@ public class Main {
     private static int turnOn(){
         int result = 1;
         Queue<int[]> dq = new ArrayDeque<>();
-        boolean[][][] visited = new boolean[N][N][M+1];
+        boolean[][] visited = new boolean[N][N];
 
         dq.offer(new int[] {0,0});
         map[0][0] = 1; // 시작 방 불켜기
-        visited[0][0][result] = true;
+        visited[0][0] = true;
 
-        // 탐색 시작
+        // 불을 켰다면 탐색 시작
         while(!dq.isEmpty()){
             int[] cur = dq.poll();
 
@@ -71,6 +71,8 @@ public class Main {
                     if(map[info[0]][info[1]] == 0){
                         map[info[0]][info[1]] = 1;
                         result++;
+                        visited = new boolean[N][N];
+                        visited[cur[0]][cur[1]] = true;
                     }
                 }
             }
@@ -83,7 +85,7 @@ public class Main {
                     continue;
                 }
 
-                if(visited[nr][nc][result]){
+                if(visited[nr][nc]){
                     continue;
                 }
 
@@ -91,7 +93,7 @@ public class Main {
                     continue;
                 }
 
-                visited[nr][nc][result] = true;
+                visited[nr][nc] = true;
                 dq.offer(new int[] {nr, nc});
             }
         }
