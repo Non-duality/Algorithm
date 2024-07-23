@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = null;
+        StringBuilder sb = new StringBuilder();
 
         N = Integer.parseInt(br.readLine());
         st = new StringTokenizer(br.readLine());
@@ -27,8 +28,10 @@ public class Main {
 
         for(int i = 0; i < M; i++){
             int result = binarySearch(Integer.parseInt(st.nextToken()));
-            System.out.println(result);
+            sb.append(result).append("\n");
         }
+
+        System.out.println(sb.toString());
 
     }
     private static int binarySearch(int target){
