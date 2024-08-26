@@ -28,7 +28,7 @@ class Solution {
             int[] count = nodes.get(key);
             
             if(count[0] >= 2 && count[1] == 0) extraNode = key;
-            else if(count[0] == 0 && count[1] > 0) stick++;
+            else if(count[0] == 0) stick++;
             else if(count[0] >= 2 && count[1] >=2) eight++;
             
         }
