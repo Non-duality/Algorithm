@@ -12,7 +12,6 @@ class Solution {
             }else{
                 start = mid + 1;
             }
-            System.out.println(start + " " + time + " " + end);
         }
         answer = start;
         return answer;
