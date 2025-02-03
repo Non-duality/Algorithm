@@ -28,10 +28,12 @@ public class Main {
         }
 
         Collections.sort(results);
-
-        System.out.println(results.size());
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(results.size()).append("\n");
         for(String temp : results){
-            System.out.println(temp);
+            sb.append(temp).append("\n");
         }
+        System.out.println(sb.toString());
     }
 }
