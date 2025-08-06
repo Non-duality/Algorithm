@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -16,14 +15,32 @@ public class Main {
             else one ++;
         }
 
+        StringBuilder sb =new StringBuilder(S);
         zero = zero / 2;
         one = one / 2;
 
-        char[] arr = new char[zero + one];
-        Arrays.fill(arr, 0, zero, '0');
-        Arrays.fill(arr, zero, zero + one, '1');
+        int idx = 0;
+        while(one != 0){
+            if(sb.charAt(idx) - '0' == 1){
+                sb.deleteCharAt(idx);
+                one --;
+            }
+            else idx++;
 
-        String result = new String(arr);
-        System.out.println(result);
+            if(idx == sb.length()) break;
+        }
+
+        idx = sb.length() - 1;
+        while(zero != 0){
+            if(sb.charAt(idx) - '0' == 0){
+                sb.deleteCharAt(idx);
+                zero --;
+            }
+
+            idx--;
+            if(idx == -1) break;
+        }
+
+        System.out.println(sb.toString());
     }
 }
